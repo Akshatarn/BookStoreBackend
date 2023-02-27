@@ -109,7 +109,44 @@ namespace RepositoryLayer.Services
                 throw ex;
             }   
         }
-        
+        public string ForgotPassword(string EmailId)
+        {
+            using (con)
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("SPForgotPass", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@EmailId", EmailId);
+                    con.Open();
+                    SqlDataReader result = cmd.ExecuteReader();
+                    if (result.HasRows)
+                    {
+                        long UserId = 0;
+                        while(result.Read())
+                        {
+                            EmailId = Convert.ToString(result["EmailId"] == DBNull.Value ? default : result["EmailId"]);
+                            UserId = result.IsDBNull("UserId") ? 0 : result.GetInt32("UserId");
+
+                        }
+                        var token = this.GenerateSecurityToken(EmailId,UserId);
+                        MSMQ_Model msmq = new MSMQ_Model();
+                        msmq.sendData2Queue(token);
+                        return token;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                catch (Exception e)
+                {
+
+                    throw e;
+                }
+            }
+        }
+       
         public string GenerateSecurityToken(string emailId,long userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

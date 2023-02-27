@@ -61,6 +61,29 @@ namespace BookStore.Controllers
                 throw e;
             }
         }
+        [HttpPost]
+        [Route("ForgotPassword")]
+        public IActionResult ForgotPassword(string EmailId)
+        {
+            try
+            {
+                var result = iuserBL.ForgotPassword(EmailId);
+                if (result != null)
+                {
+                    return Ok(new { success = true, message = " Reset Email sent" });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Reset Unsuccessfull" });
+                }
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+        }
+        
         
     }
 }
