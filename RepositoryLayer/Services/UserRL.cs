@@ -146,7 +146,47 @@ namespace RepositoryLayer.Services
                 }
             }
         }
-       
+        public string ResetPassword(string EmailId, string newPassword, string confirmPassword)
+        {
+            using (con)
+            {
+                try
+                {
+                    if (newPassword.Equals(confirmPassword))
+                    {
+                        SqlCommand cmd = new SqlCommand("SPResetPassword", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@EmailId", EmailId);
+                        cmd.Parameters.AddWithValue("@Password", ConvertoEncrypt(newPassword));
+
+                        con.Open();
+
+                        SqlDataReader result = cmd.ExecuteReader();
+                        if (result.HasRows)
+                        {
+                            long UserId = 0;
+                            while(result.Read())
+                            {
+                                EmailId = Convert.ToString(result["EmailId"] == DBNull.Value ? default : result["EmailId"]);
+                                newPassword = Convert.ToString(result["Password"] == DBNull.Value ? default : result["Password"]);
+                                UserId = result.IsDBNull("UserId") ? 0 : result.GetInt32("UserId");
+                            }
+                            return EmailId;
+                        }
+                        return EmailId;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+        }
         public string GenerateSecurityToken(string emailId,long userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

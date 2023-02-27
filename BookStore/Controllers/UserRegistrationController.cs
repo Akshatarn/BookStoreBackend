@@ -83,7 +83,28 @@ namespace BookStore.Controllers
                 throw;
             }
         }
-        
-        
+        [HttpPut]
+        [Route("ResetPassword")]
+        public IActionResult ResetPassword(string newPasswoerd,string confirmPassword)
+        {
+            try
+            {
+                var EmailId = User.FindFirst(ClaimTypes.Email).Value.ToString();
+                var result = iuserBL.ResetPassword(EmailId,newPasswoerd,confirmPassword);
+                if (result != null)
+                {
+                    return Ok(new { success = true, message = " Reset Email sent" });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Reset Unsuccessfull" });
+                }
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
