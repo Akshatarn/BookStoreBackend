@@ -19,10 +19,22 @@ namespace BussinessLayer.Services
             {
                 return iuserRL.Registration(userRegistrationModel);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                throw e;
             }
         }
+        public string Login(LoginModel loginModel)
+        {
+            try
+            {
+                return iuserRL.Login(loginModel);  
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+        
     }
 }

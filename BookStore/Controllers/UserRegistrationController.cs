@@ -1,7 +1,9 @@
 ﻿using BussinessLayer.Interface;
 using CommonLayer.Model;
+using javax.security.auth.spi;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BookStore.Controllers
 {
@@ -31,11 +33,34 @@ namespace BookStore.Controllers
                 }
 
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
 
-                throw;
+                throw e;
             }
         }
+        [HttpPost]
+        [Route("Login")]
+        public IActionResult Login(LoginModel loginModel)
+        {
+            try
+            {
+                var result = iuserBL.Login(loginModel); 
+                if(result!=null)
+                {
+                    return Ok(new { success = true, message = "Login Successful", data = result });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "Login Unsuccessful" });
+                }
+            }
+            catch (System.Exception e)
+            {
+
+                throw e;
+            }
+        }
+        
     }
 }
